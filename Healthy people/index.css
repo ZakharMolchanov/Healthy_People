@@ -285,4 +285,116 @@ table {
 }
 
 /*#endregion Main-name*/
-/* #region Main-Program-train */
+
+/* #region Main-website_description */
+.website-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+.website__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.website__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 414px) {
+  .website__container {
+    padding: 0 13px;
+  }
+}
+/* #endregion Main-Program-train */
+/* #region Main-program-train */
+.training-plan-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+.training-plan__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.training-plan__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* #endregion Main-program-train */
+/* #region Main-diet */
+.diet-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+.diet__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.diet__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 414px) {
+  .diet__container {
+    padding: 0 13px;
+  }
+}
+
+/* #endregion Main-diet */
+/* #region footer */
+.footer__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.footer__information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.footer__contact-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 414px) {
+  .footer__container {
+    padding: 0 13px;
+  }
+}
+/* #endregion footer */
