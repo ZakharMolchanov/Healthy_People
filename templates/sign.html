@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Registration</title>
+    <link rel="stylesheet" href="static\css\sign.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Регистрация</h1>
+      <form id="register-form" action="{{url_for('add_user')}}" method="POST">
+        <label for="User_name">Имя:</label>
+        <input type="text" id="user_name" name="User_name" required />
+
+        <label for="User_surname">Фамилия:</label>
+        <input type="text" id="user_surname" name="User_surname" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="Email" required />
+
+        <label for="Password">Пароль:</label>
+        <input type="password" id="password" name="Password_hash" required />
+
+        <label for="repeat_password">Повторите пароль:</label>
+        <input
+          type="password"
+          id="repeat_password"
+          name="repeat_password"
+          required
+        />
+
+        <input type="submit" value="Зарегистрироваться" />
+      </form>
+      <a class="login_href" href="login.html">У вас есть аккаунт?</a>
+    </div>
+
+    <script src="static\js\sign.js"></script>
+  </body>
+</html>
