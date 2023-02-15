@@ -16,20 +16,12 @@
       method: "POST",
       body: data,
       credentials: "same-origin",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Неверный логин или пароль!");
-        }
-        return response.json();
-      })
-      .then((result) => {
-        if (result.message === "User logged in!") {
-        } else {
-          const errorMessage = document.getElementById("error-message");
-          errorMessage.innerText = result.message;
-          errorMessage.style.display = "block";
-        }
-      });
+    }).then((result) => {
+      if (result.message === "User logged in!") {
+        alert("Вы успешно вошли!");
+      } else {
+        const errorMessage = document.getElementById("error-message");
+      }
+    });
   });
 })();

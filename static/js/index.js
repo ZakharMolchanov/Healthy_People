@@ -15,4 +15,3 @@ function checkAuth() {
 }
 
 // Вызов функции проверки авторизации при загрузке страницы
-window.onload = checkAuth;
