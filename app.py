@@ -62,12 +62,15 @@ def add_user():
 def login():
     if request.method == 'POST':
         data = request.form.to_dict()
-        user = Users.query.filter_by(Email=data['Email']).first()
-        if user and bcrypt.check_password_hash(user.Password_hash, data['Password_hash']):
+        email = data['Email']
+        password = data['Password']
+        user = Users.query.filter_by(Email=email).first()
+        if user and bcrypt.check_password_hash(user.Password_hash, password):
             login_user(user)
-            return jsonify({'message': 'User logged in!'}), 200
+            return redirect(url_for('index'))
         else:
-            return jsonify({'message': 'Invalid username or password'}), 401
+            return render_template('login.html', error='Invalid email or password')
+
     else:
         return render_template('login.html')
 
