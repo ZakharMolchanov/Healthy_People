@@ -397,4 +397,11 @@ table {
     padding: 0 13px;
   }
 }
+.welcome_messange {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+}
 /* #endregion footer */

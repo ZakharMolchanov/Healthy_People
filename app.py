@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -45,6 +45,7 @@ def add_user():
         password_hash = bcrypt.generate_password_hash(data['Password_hash']).decode('utf-8')
         new_user = Users(User_name=data['User_name'], User_surname=data['User_surname'], Email=data['Email'],
                          Password_hash=password_hash)
+        session = db.session()
         db.session.add(new_user)
         db.session.flush()
         db.session.commit()
@@ -67,19 +68,20 @@ def login():
         user = Users.query.filter_by(Email=email).first()
         if user and bcrypt.check_password_hash(user.Password_hash, password):
             login_user(user)
-            return redirect(url_for('index'))
+            return jsonify(
+                    {'message'     : 'User logged in!', 'user_id': user.User_id, 'user_name': user.User_name,
+                     'user_surname': user.User_surname}), 201
         else:
-            return render_template('login.html', error='Invalid email or password')
+            return render_template('login.html', error='Неправильный логин или пароль')
 
     else:
         return render_template('login.html')
 
 
-@app.route('/loogout')
-@login_required
+@app.route('/logout')
 def logout():
-    logout_user()
-    return jsonify({'message': 'User logged out!'}), 200
+    session.clear()
+    return redirect(url_for('index'))
 
 
 @login_manager.user_loader
@@ -87,10 +89,10 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
-@app.route('/index/<user_id>/<user_name>/<user_surname>')
+@app.route('/Home/<user_name>/<user_surname>')
 @login_required
-def index_user(user_id, user_name, user_surname):
-    return render_template('index.html', name=user_name, surname=user_surname)
+def index_user(user_name, user_surname):
+    return render_template('Home.html', name=user_name, surname=user_surname)
 
 
 if __name__ == '__main__':

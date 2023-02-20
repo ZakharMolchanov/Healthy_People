@@ -1,27 +1,36 @@
-(function () {
-  "use strict";
+const form = document.querySelector("form");
+const emailInput = document.querySelector("#email");
+const passwordInput = document.querySelector("#password");
 
-  // Get the form
-  const form = document.getElementById("login-form");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-  // Add event listener to the form
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
+  const formData = new FormData(form);
+  const email = formData.get("email");
+  const password = formData.get("password");
 
-    // Get the form data
-    const data = new FormData(form);
-
-    // Send the data to the server
-    fetch("/login.html", {
-      method: "POST",
-      body: data,
-      credentials: "same-origin",
-    }).then((result) => {
-      if (result.message === "User logged in!") {
-        alert("Вы успешно вошли!");
+  fetch("/login.html", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
       } else {
-        const errorMessage = document.getElementById("error-message");
+        throw new Error("Failed to login user");
       }
+    })
+    .then((data) => {
+      console.log(data);
+      if (data.message === "User logged in!") {
+        alert("Вы успешно вошли в систему!");
+        window.location.href =
+          "/Home/" + data.user_name + "/" + data.user_surname;
+      } else {
+        alert("Не удалось войти в систему.");
+      }
+    })
+    .catch((error) => {
+      alert("Неправильный логин или пароль!");
     });
-  });
-})();
+});
