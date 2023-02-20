@@ -1,0 +1,308 @@
+/* #region Reset */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* #endregion Reset */
+
+/*#region Navbar*/
+
+.navbar__conteiner {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+}
+.navbar-name {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 28px;
+  text-decoration: none;
+}
+.navbar__menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar__menu-item.active {
+  color: rgba(251, 147, 0, 1);
+}
+.navbar__menu-item {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+
+  text-decoration: none;
+  margin-left: 30px;
+  margin-right: 30px;
+  font-family: Montserrat;
+
+  transition: 0.3s;
+}
+
+.navbar__sign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #fb9333;
+  border-radius: 100px;
+  width: 150px;
+  height: 50px;
+
+  font-size: 19px;
+  text-decoration: none;
+  font-family: Montserrat;
+  font-weight: 700;
+  margin-left: 1vmax;
+  margin-right: 1vmax;
+  min-width: 100px;
+  min-height: 32px;
+  color: #fff;
+}
+@media (max-width: 414px) {
+  .navbar__conteiner {
+    padding: 0 13px;
+  }
+  .navbar-name {
+    font-size: 15px;
+    line-height: 20px;
+  }
+
+  .navbar__menu-item {
+    font-size: 13px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .navbar__sign {
+    width: 50px;
+    height: 25px;
+    font-size: 13px;
+  }
+}
+/*#endregion RegionName*/
+/*#region Main-name*/
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 100px;
+}
+.main-name_title {
+  font-size: 36px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  text-align: center;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 20px;
+    padding: 0 50px;
+
+}
+
+.calculator-form {
+  width: 40%;
+  margin-right: 20px;
+
+}
+
+h2 {
+  margin-bottom: 10px;
+
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+label {
+  margin-bottom: 5px;
+}
+
+input,
+select {
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.result-container {
+  width: 50%;
+}
+
+.result {
+  margin-bottom: 20px;
+}
+
+.result label {
+  font-weight: bold;
+}
+/* #region Footer */
+.footer__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.footer__information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.footer__contact-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 414px) {
+  .footer__container {
+    padding: 0 13px;
+  }
+}
+.welcome_messange {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+}
+/* #endregion Footer */

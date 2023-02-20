@@ -95,5 +95,11 @@ def index_user(user_name, user_surname):
     return render_template('Home.html', name=user_name, surname=user_surname)
 
 
+@app.route('/Home/<username>/diets.html')
+def diets(username):
+    current_user = Users.query.filter_by(User_name=username).first()
+    return render_template('diets.html', name=current_user.User_name)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
