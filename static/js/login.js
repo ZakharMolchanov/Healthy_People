@@ -25,7 +25,12 @@ form.addEventListener("submit", (e) => {
       if (data.message === "User logged in!") {
         alert("Вы успешно вошли в систему!");
         window.location.href =
-          "/Home/" + data.user_name + "/" + data.user_surname;
+          "/Home/" +
+          data.user_id +
+          "/" +
+          data.user_name +
+          "/" +
+          data.user_surname;
       } else {
         alert("Не удалось войти в систему.");
       }

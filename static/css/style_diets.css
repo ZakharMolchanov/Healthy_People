@@ -213,66 +213,136 @@ table {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 100px;
+  margin-top: 70px;
 }
 .main-name_title {
   font-size: 36px;
   font-weight: 700;
   font-family: Montserrat;
   color: rgba(87, 87, 87, 1);
-  line-height: 130%;
+  line-height: 56px;
   text-align: center;
 }
+.calculator_title {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 56px;
+  text-align: center;
+  margin-top: 30px;
+}
 .container {
+  margin-top: 15px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin: 20px;
-    padding: 0 50px;
-
+  align-items: center;
+  font-family: Montserrat;
+  font-weight: 600;
+  color: rgba(87, 87, 87, 1);
+  font-size: 16px;
 }
+.calculate-form {
+  width: 80%;
+  display: flex;
+  margin-right: 100px;
+  flex-direction: column;
+  background: #ffffff;
 
-.calculator-form {
-  width: 40%;
-  margin-right: 20px;
-
-}
-
-h2 {
-  margin-bottom: 10px;
-
-}
-
-form {
+  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
+  border-radius: 50px;
+  justify-content: center;
   display: flex;
   flex-direction: column;
-
+  align-items: center;
 }
 
-
-label {
-  margin-bottom: 5px;
+.calculate-form label {
+  margin-top: 10px;
+  display: block;
+  font-weight: bold;
+  text-align: left;
 }
 
-input,
-select {
-  margin-bottom: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+.calculate-form input[type="number"],
+.calculate-form select {
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  width: 60%;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
+.calculate-form input[type="number"]:focus,
+.calculate-form select:focus {
+  outline: none;
+  border-color: #fb9333;
+}
+
+.calculate-form select {
+  border-radius: 20px;
+}
+
+.calculate-form input[type="submit"] {
+  background-color: rgba(251, 147, 51, 1);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 60%;
+}
+
+.calculate-form input[type="submit"]:hover {
+  background-color: #ffba6f;
+}
 .result-container {
-  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+}
+
+.result_metabolism {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  font-size: 20px;
+}
+
+.result_metabolism label {
+  margin-bottom: 10px;
+}
+
+.result_metabolism input[type="text"] {
+  font-size: 24px;
+  text-align: center;
+  width: 150px;
 }
 
 .result {
-  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px;
 }
 
 .result label {
-  font-weight: bold;
+  font-size: 20px;
+  margin-right: 10px;
 }
+
+.result input[type="text"] {
+  font-size: 20px;
+  text-align: right;
+  width: 100px;
+  margin-right: 10px;
+}
+
 /* #region Footer */
 .footer__container {
   display: flex;

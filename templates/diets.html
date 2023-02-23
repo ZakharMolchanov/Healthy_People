@@ -52,45 +52,123 @@
       <div class="main-name_title">
         <span style="color: rgba(251, 147, 51, 1)">ПЛАН</span> ПИТАНИЯ
       </div>
+      <h2 class="calculator_title">
+        Калькулятор расчета базового
+        <span style="color: rgba(251, 147, 51, 1)">обмена веществ</span>
+      </h2>
       <div class="container">
-        <div class="calculator-form">
-          <h2>Калькулятор расчета базового обмена веществ</h2>
-          <form>
-            <label>Пол:</label>
-            <input type="radio" name="gender" value="male" />Мужской
-            <input type="radio" name="gender" value="female" />Женский
-            <label>Рост (см):</label>
-            <input type="number" name="height" />
-            <label>Вес (кг):</label>
-            <input type="number" name="weight" />
-            <label>Возраст (лет):</label>
-            <input type="number" name="age" />
-            <label>Уровень физической активности:</label>
-            <select name="activity">
-              <option value="1.2">Основной базовый обмен веществ</option>
-              <option value="1.375">Минимальная активность</option>
-              <option value="1.55">1-3 тренировки в неделю</option>
-              <option value="1.725">5 и более тренировок в неделю</option>
-            </select>
-            <button type="button" onclick="calculateBMR()">Рассчитать</button>
-          </form>
-        </div>
+        <form
+          id="calculate_form"
+          class="calculate-form"
+          action=""
+          method="post"
+        >
+          <label for="gender">Пол:</label>
+          <select id="gender" name="gender" required>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+          </select>
+          <br /><br />
+
+          <label for="height">Рост (см):</label>
+          <input
+            type="number"
+            id="height"
+            name="height"
+            min="150"
+            max="220"
+            required
+            value="{{height}}"
+            placeholder=""
+          /><br /><br />
+
+          <label for="weight">Вес (кг):</label>
+          <input
+            type="number"
+            id="weight"
+            name="weight"
+            min="31"
+            max="160"
+            value="{{weight}}"
+            placeholder=""
+          /><br /><br />
+
+          <label for="age">Возраст:</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            min="16"
+            max="65"
+            value="{{age}}"
+            placeholder=""
+            required
+          /><br /><br />
+
+          <label for="Physical_activity">Уровень физической активности:</label>
+          <select id="Physical_activity" name="Physical_activity" required>
+            <option value="1">Базовый обмен веществ</option>
+            <option value="1.2">Низкая активность</option>
+            <option value="1.375">1-3 Тренировки в неделю</option>
+            <option value="1.55">5 Тренировок в неделю</option>
+            <option value="1.6375">Ежедневные тренировкин</option>
+          </select>
+          <br /><br />
+
+          <input
+            type="submit"
+            class="calculate-btn"
+            name="calculate"
+            value="Рассчитать"
+          /><br /><br />
+        </form>
+
         <div class="result-container">
-          <div class="result">
-            <label>Базовый обмен веществ (ккал/сутки):</label>
-            <span id="bmr-result"></span>
+          <div class="result_metabolism">
+            <label>
+              Ваш
+              <span style="color: rgba(251, 147, 51, 1)"
+                >Базовый обмен веществ (ккал/сутки)</span
+              >
+            </label>
+            <input
+              type="text"
+              id="result"
+              name="result"
+              value="{{metabolism}}"
+              readonly
+            />
+            <span id="Physical_activity-result"></span>
           </div>
           <div class="result">
-            <label>Количество белка в сутки (г):</label>
-            <span id="protein-result"></span>
+            <label>Количество белка в сутки (г)</label>
+            <input
+              type="text"
+              id="result"
+              name="result"
+              value="{{proteins}}"
+              readonly
+            />
           </div>
           <div class="result">
-            <label>Количество жиров в сутки (г):</label>
-            <span id="fat-result"></span>
+            <label>Количество жиров в сутки (г)</label>
+            <input
+              type="text"
+              id="result"
+              name="result"
+              value="{{fats}}"
+              readonly
+            />
           </div>
           <div class="result">
-            <label>Количество углеводов в сутки (г):</label>
-            <span id="carb-result"></span>
+            <label>Количество углеводов в сутки (г)</label>
+            <input
+              type="text"
+              id="result"
+              name="result"
+              value="{{carbs}}"
+              readonly
+            />
           </div>
         </div>
       </div>

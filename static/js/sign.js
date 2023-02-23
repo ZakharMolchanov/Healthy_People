@@ -26,7 +26,13 @@ form.addEventListener("submit", (e) => {
         if (data.message === "User registered and logged in!") {
           alert("Вы успешно зарегистрированы!");
           window.location.href =
-            "/Home/" + data.user_name + "/" + data.user_surname;
+            "/Home/" +
+            data.user_id +
+            "/" +
+            data.user_name +
+            "/" +
+            data.user_surname 
+           ;
         } else {
           alert("Не удалось зарегистрироваться.");
         }
