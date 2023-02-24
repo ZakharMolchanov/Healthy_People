@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_login import LoginManager, login_user, login_required, UserMixin, current_user
-from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from my_classes import db, Users, Physical_activity
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -9,36 +9,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost
 bcrypt = Bcrypt(app)
 app.secret_key = bcrypt.generate_password_hash(
         '@!K@#@#DJSFHJSDjdshnjf@#t)2@4*%#djsf4^rew%^#@$D&*FDSdyf*&^#$%CBK').decode('utf-8')
-db = SQLAlchemy(app)
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-
-class Users(db.Model, UserMixin):
-    User_id = db.Column(db.Integer, primary_key=True)
-    User_name = db.Column(db.String(80), unique=False, nullable=False)
-    User_surname = db.Column(db.String(80), unique=False, nullable=False)
-    Email = db.Column(db.String(120), unique=True, nullable=False)
-    Password_hash = db.Column(db.String(256), unique=False, nullable=False)
-    Age = db.Column(db.Integer, unique=False, nullable=False)
-    Weight = db.Column(db.Integer, unique=False, nullable=False)
-    Height = db.Column(db.Integer, unique=False, nullable=False)
-    Physical_activity_id = db.Column(db.Integer, db.ForeignKey('physical_activity.Physical_activity_id'),
-                                     nullable=False)
-    Metabolism = db.Column(db.Integer, unique=False, nullable=False)
-    Gender = db.Column(db.String(1), unique=False, nullable=False)
-
-    def get_id(self):
-        return self.User_id
-
-
-class Physical_activity(db.Model):
-    Physical_activity_id = db.Column(db.Integer, primary_key=True)
-    Physical_activity_name = db.Column(db.String(80), unique=False, nullable=False)
-    Coefficient = db.Column(db.Float, unique=False, nullable=False)
-
-    def get_id(self):
-        return self.Physical_activity_id
 
 
 @login_manager.user_loader
@@ -67,7 +42,7 @@ def add_user():
         login_user(new_user)
 
         return jsonify(
-                {'message': 'User registered and logged in!', 'user_id': new_user.User_id,
+                {'message'  : 'User registered and logged in!', 'user_id': new_user.User_id,
                  'user_name': new_user.User_name, 'user_surname': new_user.User_surname}), 201
 
     else:
@@ -84,7 +59,7 @@ def login():
         if user and bcrypt.check_password_hash(user.Password_hash, password):
             login_user(user)
             return jsonify(
-                    {'message': 'User logged in!', 'user_id': user.User_id, 'user_name': user.User_name,
+                    {'message'     : 'User logged in!', 'user_id': user.User_id, 'user_name': user.User_name,
                      'user_surname': user.User_surname}), 201
         else:
             return render_template('login.html', error='Неправильный логин или пароль')
@@ -111,7 +86,7 @@ def index_user(user_id, user_name, user_surname):
                            name=user_name, surname=user_surname)
 
 
-@app.route('/Home/<user_id>/<username>/diets.html', methods=['GET', 'POST'])
+@app.route('/Home/<user_id>/<username>/diets', methods=['GET', 'POST'])
 @login_required
 def diets(user_id, username):
     if request.method == 'POST':
@@ -156,6 +131,12 @@ def diets(user_id, username):
                                carbs=int((current_user.Metabolism * 0.35) // 4))
     else:
         return render_template('diets.html', user_id=user_id, username=username)
+
+
+@app.route('/Home/<user_id>/<username>/training', methods=['GET', 'POST'])
+@login_required
+def training(user_id, username):
+    return (render_template('training.html', user_id=user_id, username=username))
 
 
 if __name__ == '__main__':

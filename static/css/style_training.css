@@ -231,7 +231,17 @@ table {
   line-height: 40px;
   text-align: center;
 }
-.calculator_title {
+.training_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Montserrat;
+  font-weight: 600;
+  color: rgba(87, 87, 87, 1);
+  font-size: 16px;
+}
+
+.form_training_title {
   font-size: 26px;
   font-weight: 700;
   font-family: Montserrat;
@@ -239,41 +249,17 @@ table {
   line-height: 56px;
   text-align: center;
   margin-top: 30px;
-}
-.container {
-  margin-top: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: Montserrat;
-  font-weight: 600;
-  color: rgba(87, 87, 87, 1);
-  font-size: 16px;
-}
-.calculate-form {
-  width: 80%;
-  display: flex;
-  margin-right: 100px;
-  flex-direction: column;
-  background: #ffffff;
-
-  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
-  border-radius: 50px;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin-bottom: 20px;
 }
 
-.calculate-form label {
+.training_form label {
   margin-top: 10px;
   display: block;
   font-weight: bold;
   text-align: left;
 }
 
-.calculate-form input[type="number"],
-.calculate-form select {
+.training_form select {
   border-radius: 10px;
   border: 2px solid #ccc;
   padding: 10px;
@@ -281,19 +267,19 @@ table {
   width: 60%;
   justify-content: center;
   box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
-.calculate-form input[type="number"]:focus,
-.calculate-form select:focus {
+.training_form select:focus {
   outline: none;
   border-color: #fb9333;
 }
 
-.calculate-form select {
+.training_form select {
   border-radius: 20px;
 }
 
-.calculate-form input[type="submit"] {
+.training_form input[type="submit"] {
   background-color: rgba(251, 147, 51, 1);
   color: #fff;
   border: none;
@@ -305,50 +291,8 @@ table {
   width: 60%;
 }
 
-.calculate-form input[type="submit"]:hover {
+.training_form input[type="submit"]:hover {
   background-color: #ffba6f;
-}
-.result-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 16px;
-}
-
-.result_metabolism {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 10px;
-  font-size: 20px;
-}
-
-.result_metabolism label {
-  margin-bottom: 10px;
-}
-
-.result_metabolism input[type="text"] {
-  font-size: 24px;
-  text-align: center;
-  width: 150px;
-}
-
-.result {
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 10px;
-}
-
-.result label {
-  font-size: 20px;
-  margin-right: 10px;
-}
-
-.result input[type="text"] {
-  font-size: 20px;
-  text-align: right;
-  width: 100px;
-  margin-right: 10px;
 }
 
 /* #region Footer */
