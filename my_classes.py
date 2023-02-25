@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 class Users(db.Model, UserMixin):
     User_id = db.Column(db.Integer, primary_key=True)
+    Program_id = db.Column(db.Integer, db.ForeignKey('programs.Program_id'), nullable=False)
     User_name = db.Column(db.String(80), unique=False, nullable=False)
     User_surname = db.Column(db.String(80), unique=False, nullable=False)
     Email = db.Column(db.String(120), unique=True, nullable=False)
@@ -30,3 +31,56 @@ class Physical_activity(db.Model):
     def get_id(self):
         return self.Physical_activity_id
 
+
+class Methods(db.Model):
+    Method_id = db.Column(db.Integer, primary_key=True)
+    Method_name = db.Column(db.String(80), unique=False, nullable=False)
+
+    def get_id(self):
+        return self.Method_id
+
+
+class Days(db.Model):
+    Day_id = db.Column(db.Integer, primary_key=True)
+    Day_count = db.Column(db.String(80), unique=False, nullable=False)
+
+    def get_id(self):
+        return self.Day_id
+
+
+class Places(db.Model):
+    Place_id = db.Column(db.Integer, primary_key=True)
+    Place_name = db.Column(db.String(80), unique=False, nullable=False)
+
+    def get_id(self):
+        return self.Place_id
+
+
+class Programs(db.Model):
+    Program_id = db.Column(db.Integer, primary_key=True)
+    Program_name = db.Column(db.String(80), unique=False, nullable=False)
+    Method_id = db.Column(db.Integer, db.ForeignKey('methods.Method_id'), nullable=False)
+    Place_id = db.Column(db.Integer, db.ForeignKey('places.Place_id'), nullable=False)
+    Day_id = db.Column(db.Integer, db.ForeignKey('days.Day_id'), nullable=False)
+
+    def get_id(self):
+        return self.Program_id
+
+
+class Exercises(db.Model):
+    Exercise_id = db.Column(db.Integer, primary_key=True)
+    Exercise_name = db.Column(db.String(80), unique=False, nullable=False)
+    Number_of_approaches = db.Column(db.Integer, unique=False, nullable=False)
+    Number_of_repetitions = db.Column(db.Integer, unique=False, nullable=False)
+
+    def get_id(self):
+        return self.Exercise_id
+
+
+class Exercises_programs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.Exercise_id'), nullable=False)
+    Program_id = db.Column(db.Integer, db.ForeignKey('programs.Program_id'), nullable=False)
+
+    def get_id(self):
+        return self.Exercise_id

@@ -1,7 +1,30 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, make_response
 from flask_login import LoginManager, login_user, login_required, UserMixin, current_user
 from flask_bcrypt import Bcrypt
-from my_classes import db, Users, Physical_activity
+from my_classes import db, Users, Physical_activity, Methods, Days, Places, Programs, Exercises, Exercises_programs
+import csv
+
+
+def generate_csv(exercises):
+    with open('exercises.csv', mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        # Write header row
+        writer.writerow(['Тренировка', 'Упражнение', 'Количество подходов', 'Количество повторений'])
+
+        # Write data rows
+        training_number = 0
+        for index, exercise in enumerate(exercises):
+            if index % 6 == 0:
+                training_number += 1
+            row = [training_number, exercise.Exercise_name, exercise.Number_of_approaches,
+                   exercise.Number_of_repetitions]
+            writer.writerow(row)
+
+    with open('exercises.csv', mode='r') as csv_file:
+        csv_content = csv_file.read()
+    return csv_content
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -29,7 +52,7 @@ def index():
         return render_template('index.html')
 
 
-@app.route('/sign.html', methods=['GET', 'POST'])
+@app.route('/sign', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
         data = request.form.to_dict()
@@ -136,7 +159,36 @@ def diets(user_id, username):
 @app.route('/Home/<user_id>/<username>/training', methods=['GET', 'POST'])
 @login_required
 def training(user_id, username):
-    return (render_template('training.html', user_id=user_id, username=username))
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        values_training = []
+        if data['location'] == 'home':
+            values_training.append(1)
+        else:
+            values_training.append(2)
+        if data['frequency'] == 'two_days':
+            values_training.append(1)
+        else:
+            values_training.append(2)
+        if data['method'] == 'full_body':
+            values_training.append(2)
+        else:
+            values_training.append(1)
+
+        program = Programs.query.filter_by(Method_id=values_training[2], Place_id=values_training[0],
+                                           Day_id=values_training[1]).first()
+        current_user.Program_id = program.Program_id
+        exercises = Exercises.query.join(Exercises_programs).filter(
+                Exercises_programs.Program_id == program.Program_id).all()
+
+        db.session.commit()
+        return render_template('training.html', user_id=user_id, username=username, exercises=exercises)
+    return render_template('training.html', user_id=user_id, username=username)
+
+
+
+
+
 
 
 if __name__ == '__main__':
