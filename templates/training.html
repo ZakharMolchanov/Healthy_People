@@ -53,54 +53,71 @@
         <span style="color: rgba(251, 147, 51, 1)">ВЫБОР</span> ПРОГРАММЫ
         ТРЕНИРОВОК
       </h2>
-      <form id="training_form" class="training_form" action="" method="post">
-        <div class="form_training_title">
-          Выберите характеристики
-          <span style="color: rgba(251, 147, 51, 1)">Программы тренировок</span>
-        </div>
-        <label for="location">Место тренировки:</label>
-        <select id="location" name="location">
-          <option value="home">Дома</option>
-          <option value="gym">В зале</option></select
-        ><br /><br />
-        <label for="frequency">Количество тренировок в неделю:</label>
-        <select id="frequency" name="frequency">
-          <option value="two_days">Двухдневная программа</option>
-          <option value="three_days">Трехдневная программа</option></select
-        ><br /><br />
-        <label for="method">Методика тренировок:</label>
-        <select id="method" name="method">
-          <option value="split">Split программа</option>
-          <option value="full_body">FullBody программа</option></select
-        ><br /><br />
-        <input
-          type="submit"
-          class="calculate-btn"
-          name="calculate"
-          value="Найти программу тренировок"
-        /><br /><br />
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>День</th>
-            <th>Упражнение</th>
-            <th>Количество подходов</th>
-            <th>Количество повторений</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set day = 0 %} {% for exercise in exercises %} {% if loop.index % 6
-          == 1 %} {% set day = day + 1 %} {% endif %}
-          <tr>
-            <td>{{ day }} День</td>
-            <td>{{ exercise.Exercise_name }}</td>
-            <td>{{ exercise.Number_of_approaches }}</td>
-            <td>{{ exercise.Number_of_repetitions }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="program_title">
+        Ваша
+        <span style="color: rgba(251, 147, 51, 1)">программа тренировок</span>
+      </div>
+      <div class="contrainer_training">
+        <form id="training_form" class="training_form" action="" method="post">
+          <div class="form_training_title">
+            Характеристики
+            <span style="color: rgba(251, 147, 51, 1)"
+              >Программы тренировок</span
+            >
+          </div>
+          <label for="location">Место тренировки:</label>
+          <select id="location" name="location">
+            <option value="home">Дома</option>
+            <option value="gym">В зале</option></select
+          ><br /><br />
+          <label for="frequency">Количество тренировок в неделю:</label>
+          <select id="frequency" name="frequency">
+            <option value="two_days">Двухдневная программа</option>
+            <option value="three_days">Трехдневная программа</option></select
+          ><br /><br />
+          <label for="method">Методика тренировок:</label>
+          <select id="method" name="method">
+            <option value="split">Split программа</option>
+            <option value="full_body">FullBody программа</option></select
+          ><br /><br />
+          <input
+            type="submit"
+            class="calculate-btn"
+            name="calculate"
+            value="Найти программу"
+          /><br /><br />
+        </form>
+
+        <table class="training-table">
+          <thead>
+            <tr>
+              <th>Тренировка</th>
+              <th>Упражнение</th>
+              <th>Количество подходов</th>
+              <th>Количество повторений</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set day = 0 %} {% set training_number = 0 %} {% for exercise in
+            exercises %} {% if loop.index % 6 == 1 %} {% set day = day + 1 %} {%
+            set training_number =training_number + loop.index % 5 %}
+            <tr>
+              <td rowspan="6">{{ training_number }}</td>
+              <td>{{ exercise.Exercise_name }}</td>
+              <td>{{ exercise.Number_of_approaches }}</td>
+              <td>{{ exercise.Number_of_repetitions }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td>{{ exercise.Exercise_name }}</td>
+              <td>{{ exercise.Number_of_approaches }}</td>
+              <td>{{ exercise.Number_of_repetitions }}</td>
+            </tr>
+            {% endif %} {% endfor %}
+          </tbody>
+        </table>
+       
+      </div>
     </main>
     <footer class="footer__container">
       <div class="footer__information">
