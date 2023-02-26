@@ -1,30 +1,8 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session, make_response
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, make_response, Response
 from flask_login import LoginManager, login_user, login_required, UserMixin, current_user
 from flask_bcrypt import Bcrypt
 from my_classes import db, Users, Physical_activity, Methods, Days, Places, Programs, Exercises, Exercises_programs
-import csv
-
-
-def generate_csv(exercises):
-    with open('exercises.csv', mode='w', newline='') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-        # Write header row
-        writer.writerow(['Тренировка', 'Упражнение', 'Количество подходов', 'Количество повторений'])
-
-        # Write data rows
-        training_number = 0
-        for index, exercise in enumerate(exercises):
-            if index % 6 == 0:
-                training_number += 1
-            row = [training_number, exercise.Exercise_name, exercise.Number_of_approaches,
-                   exercise.Number_of_repetitions]
-            writer.writerow(row)
-
-    with open('exercises.csv', mode='r') as csv_file:
-        csv_content = csv_file.read()
-    return csv_content
-
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -52,7 +30,7 @@ def index():
         return render_template('index.html')
 
 
-@app.route('/sign', methods=['GET', 'POST'])
+@app.route('/sign.html', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
         data = request.form.to_dict()
@@ -176,19 +154,59 @@ def training(user_id, username):
             values_training.append(1)
 
         program = Programs.query.filter_by(Method_id=values_training[2], Place_id=values_training[0],
-                                           Day_id=values_training[1]).first()
+                                           Day_id=values_training[1]).order_by(func.random()).first()
         current_user.Program_id = program.Program_id
         exercises = Exercises.query.join(Exercises_programs).filter(
                 Exercises_programs.Program_id == program.Program_id).all()
 
         db.session.commit()
         return render_template('training.html', user_id=user_id, username=username, exercises=exercises)
-    return render_template('training.html', user_id=user_id, username=username)
+    elif current_user.Program_id is not None:
+        program = Programs.query.filter_by(Program_id=current_user.Program_id).order_by(func.random()).first()
+        exercises = Exercises.query.join(Exercises_programs).filter(
+                Exercises_programs.Program_id == program.Program_id).all()
+        return render_template('training.html', user_id=user_id, username=username, exercises=exercises)
+    else:
+        return render_template('training.html', user_id=user_id, username=username)
 
 
+import io
+import xlsxwriter
 
 
+@app.route('/download/exercises', methods=['GET'])
+def download_exercises():
+    exercises = Exercises.query.join(Exercises_programs).filter(
+            Exercises_programs.Program_id == current_user.Program_id).all()
 
+    output = io.BytesIO()
+
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    header_row = ['Тренировка', 'Упражнение', 'Количество подходов', 'Количество повторений']
+    for col_num, col_val in enumerate(header_row):
+        worksheet.write(0, col_num, col_val)
+
+    training_number = 0
+    for index, exercise in enumerate(exercises):
+        if index % 6 == 0:
+            training_number += 1
+        row = [training_number, exercise.Exercise_name, exercise.Number_of_approaches,
+               exercise.Number_of_repetitions]
+        for col_num, col_val in enumerate(row):
+            worksheet.write(index + 1, col_num, col_val)
+
+    workbook.close()
+    output.seek(0)
+    xlsx_content = output.getvalue()
+
+    response = Response(
+            xlsx_content,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            headers={'Content-Disposition': 'attachment;filename=exercises.xlsx'}
+    )
+    return response
 
 
 if __name__ == '__main__':
