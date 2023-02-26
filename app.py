@@ -204,7 +204,7 @@ def download_exercises():
     response = Response(
             xlsx_content,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            headers={'Content-Disposition': 'attachment;filename=exercises.xlsx'}
+            headers={'Content-Disposition': 'attachment;filename=program.xlsx'}
     )
     return response
 

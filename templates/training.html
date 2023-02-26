@@ -57,6 +57,9 @@
         Ваша
         <span style="color: rgba(251, 147, 51, 1)">программа тренировок</span>
       </div>
+      <a href="{{ url_for('download_exercises') }}" class="btn btn-primary"
+        >Скачать CSV</a
+      >
       <div class="contrainer_training">
         <form id="training_form" class="training_form" action="" method="post">
           <div class="form_training_title">
@@ -116,9 +119,6 @@
             {% endif %} {% endfor %}
           </tbody>
         </table>
-        <a href="{{ url_for('download_exercises') }}" class="btn btn-primary"
-          >Скачать CSV</a
-        >
       </div>
     </main>
     <footer class="footer__container">
