@@ -26,9 +26,7 @@
         </a>
         <div class="navbar__menu">
           <a href="#" class="navbar__menu-item active">Home</a>
-          <a href="training" class="navbar__menu-item"
-            >Программа тренировок
-          </a>
+          <a href="training" class="navbar__menu-item">Программа тренировок </a>
           <a href="diets" class="navbar__menu-item">План питания</a>
         </div>
 
@@ -128,9 +126,8 @@
         <div class="result-container">
           <div class="result_metabolism">
             <label>
-              Ваш
               <span style="color: rgba(251, 147, 51, 1)"
-                >Базовый обмен веществ (ккал/сутки)</span
+                >Ваш базовый обмен веществ (ккал/сутки)</span
               >
             </label>
             <input
@@ -175,7 +172,110 @@
         </div>
       </div>
       <div class="diet_container">
-        <div class="diet_container_title"></div>
+        <div class="calculator_title">
+          <span style="color: rgba(251, 147, 51, 1)">Ваш рацион</span> питания
+        </div>
+      </div>
+      <div class="diet_container__calories">
+        <div class="result">
+          <label>Калории</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{diet_calories}}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Белки</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{diet_proteins}}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Жиры</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{diet_fats}}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Углеводы</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{diet_carbs}}"
+            readonly
+          />
+        </div>
+      </div>
+      <form
+        method="post"
+        action="{{ url_for('download_products', user_id=user_id, username=username) }}"
+      >
+        <button type="submit" class="btn btn-primary">Download as XLSX</button>
+      </form>
+
+      <table class="diet-table">
+        <thead>
+          <tr>
+            <th>Продукт</th>
+            <th>Калории (ккал)</th>
+            <th>Белки (г)</th>
+            <th>Жиры (г)</th>
+            <th>Углеводы (г)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td>{{ product.Product_name }}</td>
+            <td>{{ product.Product_calories }}</td>
+            <td>{{ product.Product_proteins }}</td>
+            <td>{{ product.Product_fats }}</td>
+            <td>{{ product.Product_carbohydrates }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="diets-plan-title">
+        <span style="color: rgba(251, 147, 51, 1)">Дополнительная </span
+        >информация
+      </div>
+
+      <div class="diets-plan__container">
+        <div class="training-plan__item">
+          <img
+            src="{{url_for('static', filename='Images/images_description_diets_page/discription_diets1.svg')}}"
+            alt="#"
+            height="600px"
+            width="480px"
+          />
+        </div>
+        <div class="diets-plan__item"></div>
+        <img
+          src="{{url_for('static', filename='Images/images_description_diets_page/discription_diets2.svg')}}"
+          alt="#"
+          height="600px"
+          width="480px"
+        />
+        <div class="diets-plan__item">
+          <img
+            src="{{url_for('static', filename='Images/images_description_diets_page/discription_diets3.svg')}}"
+            height="600px"
+            width="480px"
+            alt="#"
+          />
+        </div>
       </div>
     </main>
     <footer class="footer__container">

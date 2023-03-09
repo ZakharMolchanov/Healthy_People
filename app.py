@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, make_response, Response
 from flask_login import LoginManager, login_user, login_required, UserMixin, current_user
 from flask_bcrypt import Bcrypt
-from my_classes import db, Users, Physical_activity, Methods, Days, Places, Programs, Exercises, Exercises_programs
+from my_classes import db, Users, Physical_activity, Methods, Days, Places, Programs, Exercises, Exercises_programs, \
+    Diets, ProductsDiets, Products
 from sqlalchemy import func
+import io
+import xlsxwriter
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -91,13 +94,14 @@ def index_user(user_id, user_name, user_surname):
 @login_required
 def diets(user_id, username):
     if request.method == 'POST':
+
         data = request.form.to_dict()
         current_user.Weight = data['weight']
         current_user.Height = data['height']
         current_user.Age = data['age']
         if data['gender'] == 'female':
             current_user.Gender = 'F'
-            current_user.Metabolism = int((655 + (9.6 * int(current_user.Weight)) + (1.8 * int(current_user.Height)) - (
+            current_user.Metabolism = int((65 + (9.6 * int(current_user.Weight)) + (1.8 * int(current_user.Height)) - (
                     4.7 * int(current_user.Age))) * float(data['Physical_activity']))
         else:
             current_user.Gender = "M"
@@ -119,19 +123,39 @@ def diets(user_id, username):
         proteins = int((current_user.Metabolism * 0.45) // 4)
         fats = int((current_user.Metabolism * 0.2) // 9)
         carbs = int((current_user.Metabolism * 0.35) // 4)
+        diet = Diets.query.order_by(
+                func.abs(Diets.Diet_calories - current_user.Metabolism)
+        ).first()
+
+        current_user.Diet_id = diet.Diet_id
+        db.session.commit()
+        products = Products.query.join(ProductsDiets).filter(
+                ProductsDiets.Diet_id == diet.Diet_id).all()
         return render_template('diets.html', user_id=user_id, username=username, metabolism=current_user.Metabolism,
                                height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
-                               proteins=proteins, fats=fats, carbs=carbs)
+                               proteins=proteins, fats=fats, carbs=carbs, products=products,
+                               diet_calories=diet.Diet_calories,
+                               diet_proteins=diet.Diet_proteins, diet_fats=diet.Diet_fats,
+                               diet_carbs=diet.Diet_carbohydrates)
 
-    elif current_user.Weight is not None:
+    elif current_user.Diet_id is not None:
+        diet = Diets.query.get(current_user.Diet_id)
+        products = Products.query.join(ProductsDiets).filter(
+                ProductsDiets.Diet_id == diet.Diet_id).all()
+
         return render_template('diets.html', user_id=user_id, username=username,
                                metabolism=current_user.Metabolism,
                                height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
                                proteins=int((current_user.Metabolism * 0.45) // 4),
                                fats=int((current_user.Metabolism * 0.2) // 9),
-                               carbs=int((current_user.Metabolism * 0.35) // 4))
+                               carbs=int((current_user.Metabolism * 0.35) // 4), products=products,
+                               diet_calories=diet.Diet_calories,
+                               diet_proteins=diet.Diet_proteins, diet_fats=diet.Diet_fats,
+                               diet_carbs=diet.Diet_carbohydrates
+                               )
+
     else:
-        return render_template('diets.html', user_id=user_id, username=username)
+        return render_template('diets.html', user_id=user_id, username=username, diet=None)
 
 
 @app.route('/Home/<user_id>/<username>/training', methods=['GET', 'POST'])
@@ -170,10 +194,6 @@ def training(user_id, username):
         return render_template('training.html', user_id=user_id, username=username)
 
 
-import io
-import xlsxwriter
-
-
 @app.route('/download/exercises', methods=['GET'])
 def download_exercises():
     exercises = Exercises.query.join(Exercises_programs).filter(
@@ -190,7 +210,7 @@ def download_exercises():
 
     training_number = 0
     for index, exercise in enumerate(exercises):
-        if index % 6 == 0:
+        if index % 5 == 0:
             training_number += 1
         row = [training_number, exercise.Exercise_name, exercise.Number_of_approaches,
                exercise.Number_of_repetitions]
@@ -206,6 +226,41 @@ def download_exercises():
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             headers={'Content-Disposition': 'attachment;filename=program.xlsx'}
     )
+    return response
+
+
+@app.route('/Home/<user_id>/<username>/diets/download', endpoint='download_products', methods=['GET', 'POST'])
+@login_required
+def download_products(user_id, username):
+    products = Products.query.join(ProductsDiets).filter(
+            ProductsDiets.Diet_id == current_user.Diet_id).all()
+
+    output = io.BytesIO()
+
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    header_row = ['Продукт', 'Белки (г)', 'Жиры (г)', 'Углеводы (г)']
+    for col_num, col_val in enumerate(header_row):
+        worksheet.write(0, col_num, col_val)
+
+    for index, product in enumerate(products):
+        row = [product.Product_name, product.Product_proteins, product.Product_fats, product.Product_carbohydrates]
+        for col_num, col_val in enumerate(row):
+            worksheet.write(index + 1, col_num, col_val)
+
+    workbook.close()
+    output.seek(0)
+    xlsx_content = output.getvalue()
+
+    response = Response(
+            xlsx_content,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            headers={
+                    'Content-Disposition': 'attachment; filename=products.xlsx'
+            }
+    )
+
     return response
 
 

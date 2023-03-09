@@ -7,6 +7,8 @@ db = SQLAlchemy()
 class Users(db.Model, UserMixin):
     User_id = db.Column(db.Integer, primary_key=True)
     Program_id = db.Column(db.Integer, db.ForeignKey('programs.Program_id'), nullable=False)
+    Diet_id = db.Column(db.Integer, db.ForeignKey('diets.Diet_id'), nullable=False)
+
     User_name = db.Column(db.String(80), unique=False, nullable=False)
     User_surname = db.Column(db.String(80), unique=False, nullable=False)
     Email = db.Column(db.String(120), unique=True, nullable=False)
@@ -84,3 +86,35 @@ class Exercises_programs(db.Model):
 
     def get_id(self):
         return self.Exercise_id
+
+
+class Diets(db.Model):
+    Diet_id = db.Column(db.Integer, primary_key=True)
+    Diet_name = db.Column(db.String(50), nullable=False)
+    Diet_calories = db.Column(db.Integer, nullable=False)
+    Diet_proteins = db.Column(db.Integer, nullable=False)
+    Diet_fats = db.Column(db.Integer, nullable=False)
+    Diet_carbohydrates = db.Column(db.Integer, nullable=False)
+
+    def get_id(self):
+        return self.Diet_id
+
+
+class Products(db.Model):
+    Product_id = db.Column(db.Integer, primary_key=True)
+    Product_name = db.Column(db.String(255), nullable=False, unique=True)
+    Product_calories = db.Column(db.Integer, nullable=False)
+    Product_proteins = db.Column(db.Integer, nullable=False)
+    Product_fats = db.Column(db.Integer, nullable=False)
+    Product_carbohydrates = db.Column(db.Integer, nullable=False)
+
+    def get_id(self):
+        return self.Product_id
+
+
+class ProductsDiets(db.Model):
+    Product_id = db.Column(db.Integer, db.ForeignKey('products.Product_id'), primary_key=True)
+    Diet_id = db.Column(db.Integer, db.ForeignKey('diet.Diet_id'), primary_key=True)
+
+    def get_id(self):
+        return self.Product_id

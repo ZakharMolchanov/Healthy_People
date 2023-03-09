@@ -102,10 +102,10 @@
           </thead>
           <tbody>
             {% set day = 0 %} {% set training_number = 0 %} {% for exercise in
-            exercises %} {% if loop.index % 6 == 1 %} {% set day = day + 1 %} {%
-            set training_number =training_number + loop.index % 5 %}
+            exercises %} {% if loop.index % 5 == 1 %} {% set day = day + 1 %} {%
+            set training_number =training_number + loop.index % 4 %}
             <tr>
-              <td rowspan="6">{{ training_number }}</td>
+              <td rowspan="5">{{ training_number }}</td>
               <td>{{ exercise.Exercise_name }}</td>
               <td>{{ exercise.Number_of_approaches }}</td>
               <td>{{ exercise.Number_of_repetitions }}</td>
@@ -119,6 +119,36 @@
             {% endif %} {% endfor %}
           </tbody>
         </table>
+      </div>
+      <div class="training-plan-title">
+        <span style="color: rgba(251, 147, 51, 1)">Дополнительная </span
+        >информация
+      </div>
+
+      <div class="training-plan__container">
+        <div class="training-plan__item">
+          <img
+            src="{{url_for('static', filename='Images/images_description_training_page/training_description1.svg')}}"
+            alt="#"
+            height="600px"
+            width="480px"
+          />
+        </div>
+        <div class="training-plan__item"></div>
+        <img
+          src="{{url_for('static', filename='Images/images_description_training_page/training_description2.svg')}}"
+          alt="#"
+          height="600px"
+          width="480px"
+        />
+        <div class="training-plan__item">
+          <img
+            src="{{url_for('static', filename='Images/images_description_training_page/training_description3.svg')}}"
+            height="600px"
+            width="480px"
+            alt="#"
+          />
+        </div>
       </div>
     </main>
     <footer class="footer__container">
