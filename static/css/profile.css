@@ -1,0 +1,672 @@
+/* #region Reset */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* #endregion Reset */
+
+/*#region Navbar*/
+
+.navbar__conteiner {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+}
+.navbar-name {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 28px;
+  text-decoration: none;
+}
+.navbar__menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar__menu-item.active {
+  color: rgba(251, 147, 0, 1);
+}
+.navbar__menu-item {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+
+  text-decoration: none;
+  margin-left: 30px;
+  margin-right: 30px;
+  font-family: Montserrat;
+
+  transition: 0.3s;
+}
+
+.navbar__sign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #fb9333;
+  border-radius: 100px;
+  width: 150px;
+  height: 50px;
+
+  font-size: 19px;
+  text-decoration: none;
+  font-family: Montserrat;
+  font-weight: 700;
+  margin-left: 1vmax;
+  margin-right: 1vmax;
+  min-width: 100px;
+  min-height: 32px;
+  color: #fff;
+}
+@media (max-width: 414px) {
+  .navbar__conteiner {
+    padding: 0 13px;
+  }
+  .navbar-name {
+    font-size: 15px;
+    line-height: 20px;
+  }
+
+  .navbar__menu-item {
+    font-size: 13px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .navbar__sign {
+    width: 50px;
+    height: 25px;
+    font-size: 13px;
+  }
+}
+/*#endregion RegionName*/
+/*#region Main-name*/
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 70px;
+}
+.main-name_title {
+  font-size: 36px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 56px;
+  text-align: center;
+}
+.form_training_title {
+  font-size: 24px;
+  font-weight: 600;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 40px;
+  text-align: center;
+}
+.calculator_title {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 56px;
+  text-align: center;
+  margin-top: 30px;
+}
+.container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Montserrat;
+  font-weight: 600;
+  color: rgba(87, 87, 87, 1);
+  font-size: 16px;
+}
+.calculate-form {
+  width: 80%;
+  display: flex;
+  margin-right: 100px;
+  flex-direction: column;
+  background: #ffffff;
+
+  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
+  border-radius: 50px;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calculate-form label {
+  margin-top: 10px;
+  display: block;
+  font-weight: bold;
+  text-align: left;
+}
+
+.calculate-form input[type="number"],
+.calculate-form select {
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  width: 60%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.calculate-form input[type="number"]:focus,
+.calculate-form select:focus {
+  outline: none;
+  border-color: #fb9333;
+}
+
+.calculate-form select {
+  border-radius: 20px;
+}
+
+.calculate-form input[type="submit"] {
+  background-color: rgba(251, 147, 51, 1);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 60%;
+}
+
+.calculate-form input[type="submit"]:hover {
+  background-color: #ffba6f;
+}
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+}
+
+.result_metabolism {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  font-size: 20px;
+}
+
+.result_metabolism label {
+  margin-bottom: 10px;
+}
+
+.result_metabolism input[type="text"] {
+  font-size: 24px;
+  text-align: center;
+  width: 150px;
+}
+
+.result {
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px;
+}
+
+.result label {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.result input[type="text"] {
+  font-size: 20px;
+  text-align: right;
+  width: 100px;
+  margin-right: 10px;
+}
+.diet-table {
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: Montserrat;
+  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
+  border-radius: 30px;
+  border: 2px solid rgba(251, 147, 51, 1);
+  margin-top: 10px;
+}
+.program_title {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.diet-table th,
+.diet-table td {
+  padding: 10px;
+  text-align: center;
+  border: 2px solid rgba(251, 147, 51, 1);
+}
+
+.diet-table th {
+  background-color: rgba(251, 147, 51, 1);
+  color: #fff;
+  font-weight: bold;
+}
+
+.diet-table td:first-child {
+  border-right: none;
+}
+
+.diet-table td:last-child {
+  border-left: none;
+}
+.diets-plan-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+.training-plan-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.diets-plan__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+  margin-bottom: 30px;
+}
+.diets-plan__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.diet_container__calories {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.result:last-child {
+  margin-right: 0;
+}
+
+.result label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.result input[type="text"] {
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  text-align: center;
+  background-color: transparent;
+}
+.result_metabolism {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
+  border: 2px solid rgba(251, 147, 51, 1);
+  padding: 10px;
+  font-family: Montserrat;
+}
+
+.result_metabolism label {
+  margin-right: 20px;
+  font-weight: bold;
+}
+
+.result_metabolism span {
+  color: rgba(251, 147, 51, 1);
+  font-weight: bold;
+}
+
+.result_metabolism input[type="text"] {
+  border: none;
+  font-weight: bold;
+  color: rgba(251, 147, 51, 1);
+  font-size: 20px;
+  text-align: center;
+  width: 100%;
+  background-color: transparent;
+  margin-left: 5px;
+  cursor: default;
+}
+button.btn.btn-primary {
+  font-weight: bold;
+  color: white;
+  background-color: rgba(251, 147, 51, 1);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+button.btn.btn-primary:active {
+  color: white;
+  background-color: rgba(219, 112, 34, 1);
+  box-shadow: none;
+  outline: none;
+}
+.training-table {
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  justify-content: center;
+  font-family: Montserrat;
+  box-shadow: 0px 50px 80px -30px rgba(151, 109, 0, 0.2);
+  border-radius: 30px;
+  border: 2px solid rgba(251, 147, 51, 1);
+}
+
+.training-table th,
+.training-table td {
+  padding: 10px;
+  text-align: center;
+  border: 2px solid rgba(251, 147, 51, 1);
+}
+
+.training-table th {
+  background-color: rgba(251, 147, 51, 1);
+  color: #fff;
+  font-weight: bold;
+}
+
+.training-table td:first-child {
+  border-right: none;
+}
+
+.training-table td:last-child {
+  border-left: none;
+}
+.contrainer_training {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+a.btn.btn-primary {
+  font-family: "Montserrat", sans-serif;
+  color: rgba(251, 147, 51, 1);
+  text-decoration: none;
+  font-weight: 500;
+  font-family: Montserrat;
+  margin-left: 30%;
+  margin-top: 30px;
+  font-size: 15px;
+}
+.training-plan-title {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  line-height: 130%;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  text-align: center;
+}
+.training-plan__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.training-plan__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+form {
+  margin: 0 auto;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+  text-align: center;
+  font-family: M;
+}
+
+form label {
+  display: inline-block;
+  text-align: left;
+  width: 150px;
+  margin-bottom: 10px;
+}
+
+form input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: Montserrat;
+  color: rgba(87, 87, 87, 1);
+
+  width: 200px;
+}
+
+form .calculator_title {
+  font-size: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+button.btn.btn-primary {
+  font-weight: bold;
+  color: white;
+  background-color: rgba(251, 147, 51, 1);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+button.btn.btn-primary:active {
+  color: white;
+  background-color: rgba(219, 112, 34, 1);
+  box-shadow: none;
+  outline: none;
+}
+/* #region Footer */
+.footer__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
+  margin-top: 100px;
+}
+.footer__information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.footer__contact-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 414px) {
+  .footer__container {
+    padding: 0 13px;
+  }
+}
+.welcome_messange {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Montserrat;
+}
+
+/* #endregion Footer */

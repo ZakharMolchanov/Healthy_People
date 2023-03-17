@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session, make_response, Response
-from flask_login import LoginManager, login_user, login_required, UserMixin, current_user
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, Response, send_file
+from flask_login import LoginManager, login_user, login_required, current_user
 from flask_bcrypt import Bcrypt
-from my_classes import db, Users, Physical_activity, Methods, Days, Places, Programs, Exercises, Exercises_programs, \
-    Diets, ProductsDiets, Products
+from my_classes import db, Users, Programs, Exercises, Exercises_programs, Diets, ProductsDiets, Products
 from sqlalchemy import func
 import io
 import xlsxwriter
+import pandas as pd
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -53,6 +53,27 @@ def add_user():
         return render_template('/sign.html')
 
 
+@app.route('/delete-account', methods=['POST'])
+def delete_account():
+    # Получить идентификатор пользователя
+    user_id = current_user.get_id()
+
+    # Найти пользователя в базе данных
+    user = Users.query.get(user_id)
+
+    # Удалить пользователя из базы данных
+    db.session.delete(user)
+
+    # Сохранить изменения в базе данных
+    db.session.commit()
+
+    # Выйти из учетной записи удаленного пользователя
+    logout()
+
+    # Вернуть сообщение об успешном удалении аккаунта
+    return render_template('index.html')
+
+
 @app.route('/login.html', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -83,16 +104,16 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
-@app.route('/Home/<user_id>/<user_name>/<user_surname>')
+@app.route('/Home/<user_id>/<user_name>')
 @login_required
-def index_user(user_id, user_name, user_surname):
+def index_user(user_id, user_name):
     return render_template('Home.html', user_id=user_id,
-                           name=user_name, surname=user_surname)
+                           name=user_name)
 
 
-@app.route('/Home/<user_id>/<username>/diets', methods=['GET', 'POST'])
+@app.route('/Home/<user_id>/diets', methods=['GET', 'POST'])
 @login_required
-def diets(user_id, username):
+def diets(user_id):
     if request.method == 'POST':
 
         data = request.form.to_dict()
@@ -131,7 +152,7 @@ def diets(user_id, username):
         db.session.commit()
         products = Products.query.join(ProductsDiets).filter(
                 ProductsDiets.Diet_id == diet.Diet_id).all()
-        return render_template('diets.html', user_id=user_id, username=username, metabolism=current_user.Metabolism,
+        return render_template('diets.html', user_id=user_id, metabolism=current_user.Metabolism,
                                height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
                                proteins=proteins, fats=fats, carbs=carbs, products=products,
                                diet_calories=diet.Diet_calories,
@@ -143,7 +164,7 @@ def diets(user_id, username):
         products = Products.query.join(ProductsDiets).filter(
                 ProductsDiets.Diet_id == diet.Diet_id).all()
 
-        return render_template('diets.html', user_id=user_id, username=username,
+        return render_template('diets.html', user_id=user_id,
                                metabolism=current_user.Metabolism,
                                height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
                                proteins=int((current_user.Metabolism * 0.45) // 4),
@@ -155,12 +176,12 @@ def diets(user_id, username):
                                )
 
     else:
-        return render_template('diets.html', user_id=user_id, username=username, diet=None)
+        return render_template('diets.html', user_id=user_id, diet=None)
 
 
-@app.route('/Home/<user_id>/<username>/training', methods=['GET', 'POST'])
+@app.route('/Home/<user_id>/training', methods=['GET', 'POST'])
 @login_required
-def training(user_id, username):
+def training(user_id):
     if request.method == 'POST':
         data = request.form.to_dict()
         values_training = []
@@ -184,14 +205,14 @@ def training(user_id, username):
                 Exercises_programs.Program_id == program.Program_id).all()
 
         db.session.commit()
-        return render_template('training.html', user_id=user_id, username=username, exercises=exercises)
+        return render_template('training.html', user_id=user_id, exercises=exercises)
     elif current_user.Program_id is not None:
         program = Programs.query.filter_by(Program_id=current_user.Program_id).order_by(func.random()).first()
         exercises = Exercises.query.join(Exercises_programs).filter(
                 Exercises_programs.Program_id == program.Program_id).all()
-        return render_template('training.html', user_id=user_id, username=username, exercises=exercises)
+        return render_template('training.html', user_id=user_id, exercises=exercises)
     else:
-        return render_template('training.html', user_id=user_id, username=username)
+        return render_template('training.html', user_id=user_id)
 
 
 @app.route('/download/exercises', methods=['GET'])
@@ -229,9 +250,9 @@ def download_exercises():
     return response
 
 
-@app.route('/Home/<user_id>/<username>/diets/download', endpoint='download_products', methods=['GET', 'POST'])
+@app.route('/Home/<user_id>/diets/download', endpoint='download_products', methods=['GET', 'POST'])
 @login_required
-def download_products(user_id, username):
+def download_products(user_id):
     products = Products.query.join(ProductsDiets).filter(
             ProductsDiets.Diet_id == current_user.Diet_id).all()
 
@@ -262,6 +283,121 @@ def download_products(user_id, username):
     )
 
     return response
+
+
+@app.route('/Home/<user_id>/profile', methods=['GET', 'POST'])
+@login_required
+def profile(user_id):
+    age = ""
+    height = ""
+    weight = ""
+    metabolism = ""
+    gender = ""
+    if current_user.Age is not None:
+        age = current_user.Age
+    if current_user.Height is not None:
+        height = current_user.Height
+    if current_user.Weight is not None:
+        weight = current_user.Weight
+    if current_user.Metabolism is not None:
+        metabolism = current_user.Metabolism
+
+    if current_user.Gender == "F":
+        gender = "Женский"
+    else:
+        gender = "Мужской"
+    Physical_activity = ""
+    if current_user.Physical_activity_id == 1:
+        Physical_activity = "Базовый обмен веществ"
+    elif current_user.Physical_activity_id == 2:
+        Physical_activity = "Низкая активност"
+    elif current_user.Physical_activity_id == 3:
+        Physical_activity = "1-3 Тренировки в неделю"
+    elif current_user.Physical_activity_id == 4:
+        Physical_activity = "5 Тренировок в неделю"
+    elif current_user.Physical_activity_id == 5:
+        Physical_activity = "Ежедневные тренировки"
+    _exercises = []
+    _products = []
+    if current_user.Diet_id is not None:
+        _products = Products.query.join(ProductsDiets).filter(
+                ProductsDiets.Diet_id == current_user.Diet_id).all()
+    if current_user.Program_id is not None:
+        _exercises = Exercises.query.join(Exercises_programs).filter(
+                Exercises_programs.Program_id == current_user.Program_id).all()
+
+    return render_template(
+            'profile.html',
+            name=current_user.User_name,
+            surname=current_user.User_surname,
+            age=age,
+            height=height,
+            weight=weight,
+            metabolism=metabolism, gender=gender, Physical_activity=Physical_activity, products=_products,
+            exercises=_exercises)
+
+
+@app.route('/Home/download', methods=['GET'])
+@login_required
+def download_profile():
+    # Create a dictionary to store the profile information
+    data = {
+            "Имя"                          : [current_user.User_name],
+            "Фамилия"                      : [current_user.User_surname],
+            "Возраст"                      : [current_user.Age] if current_user.Age is not None else [""],
+            "Рост"                         : [current_user.Height] if current_user.Height is not None else [""],
+            "Вес"                          : [current_user.Weight] if current_user.Weight is not None else [""],
+            "Обмен веществ"                : [current_user.Metabolism] if current_user.Metabolism is not None else [""],
+            "Пол"                          : ["Женский" if current_user.Gender == "F" else "Мужской"],
+            "Уровень физической активности": [
+                    "Базовый обмен веществ" if current_user.Physical_activity_id == 1 else
+                    "Низкая активность" if current_user.Physical_activity_id == 2 else
+                    "1-3 тренировки в неделю" if current_user.Physical_activity_id == 3 else
+                    "5 тренировок в неделю" if current_user.Physical_activity_id == 4 else
+                    "Ежедневные тренировки"
+            ],
+    }
+
+    # Create a dictionary to store the diet program information
+    diet_data = {}
+    if current_user.Diet_id is not None:
+        diet_products = Products.query.join(ProductsDiets).filter(
+                ProductsDiets.Diet_id == current_user.Diet_id).all()
+        for i, p in enumerate(diet_products):
+            diet_data[f"Название {i + 1}"] = [p.Product_name]
+            diet_data[f"Калории {i + 1}"] = [p.Product_calories]
+            diet_data[f"Белки {i + 1}"] = [p.Product_proteins]
+            diet_data[f"Жиры {i + 1}"] = [p.Product_fats]
+            diet_data[f"Углеводы {i + 1}"] = [p.Product_carbohydrates]
+
+    # Create a dictionary to store the workout program information
+    workout_data = {}
+    if current_user.Program_id is not None:
+        program_exercises = Exercises.query.join(Exercises_programs).filter(
+                Exercises_programs.Program_id == current_user.Program_id).all()
+        for i, e in enumerate(program_exercises):
+            workout_data[f"Название {i + 1}"] = [e.Exercise_name]
+            workout_data[f"Количество подходов {i + 1}"] = [e.Number_of_approaches]
+            workout_data[f"Количество повторений {i + 1}"] = [e.Number_of_repetitions]
+
+    # Create a Pandas Excel writer using XlsxWriter as the engine
+    filename = f"{current_user.User_name}_{current_user.User_surname}_profile.xlsx"
+    with pd.ExcelWriter(filename, engine='xlsxwriter') as writer:
+        # Write the profile information to the first sheet
+        df = pd.DataFrame.from_dict(data, orient="index")
+        df.to_excel(writer, sheet_name='Профиль', header=False)
+
+        # Write the diet program information to the second sheet
+        if current_user.Diet_id is not None:
+            df_diet = pd.DataFrame.from_dict(diet_data, orient="index")
+        df_diet.to_excel(writer, sheet_name='Диета', header=False)
+        # Write the workout program information to the third sheet
+        if current_user.Program_id is not None:
+            df_workout = pd.DataFrame.from_dict(workout_data, orient="index")
+            df_workout.to_excel(writer, sheet_name='Тренировка', header=False)
+
+    # Return the file as a downloadable attachment
+    return send_file(filename, as_attachment=True)
 
 
 if __name__ == '__main__':

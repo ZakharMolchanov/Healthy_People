@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='css/profile.css')}}"
+    />
+
+    <title>Healthy People</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar__conteiner">
+        <a href="#" class="navbar-name">
+          <span style="color: rgba(251, 147, 51, 1)">Healthy </span> People
+        </a>
+        <div class="navbar__menu">
+          <a href="#" class="navbar__menu-item">Home</a>
+          <a href="training" class="navbar__menu-item">Программа тренировок </a>
+          <a href="diets" class="navbar__menu-item">План питания</a>
+          <a href="profile" class="navbar__menu-item active"> Кабинет</a>
+        </div>
+
+        <button id="logout-btn" class="navbar__sign">Выход</button>
+        <script>
+          document
+            .getElementById("logout-btn")
+            .addEventListener("click", function () {
+              // Отправить GET-запрос на URL /logout
+              fetch("/logout", {
+                method: "GET",
+                credentials: "same-origin",
+              }).then(function () {
+                // Перенаправить на главную страницу
+                window.location.replace("/");
+              });
+            });
+        </script>
+      </div>
+    </nav>
+    <main class="main">
+      <div class="main-name_title">
+        <span style="color: rgba(251, 147, 51, 1)">ЛИЧНЫЙ</span> КАБИНЕТ
+      </div>
+      <div class="calculator_title">
+        <span style="color: rgba(251, 147, 51, 1)">Ваша</span> Информация
+      </div>
+
+      <div class="main__container">
+        <form method="POST" action="/delete-account">
+          <button type="submit" class="btn btn-primary">Удалить аккаунт</button>
+        </form>
+
+        <form>
+          <label for="name">Имя:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value="{{name}}"
+          /><br /><br />
+          <label for="surname">Фамилия:</label>
+          <input
+            type="text"
+            id="surname"
+            name="surname"
+            value="{{surname}}"
+          /><br /><br />
+          <label for="gender">Пол</label>
+          <input
+            type="text"
+            id="gender"
+            name="gender"
+            readonly
+            value="{{gender}}"
+          /><br /><br />
+
+          <label for="height">Рост (в см):</label>
+          <input
+            type="text"
+            id="height"
+            name="height"
+            readonly
+            value="{{height}}"
+          /><br /><br />
+
+          <label for="weight">Вес (в кг):</label>
+          <input
+            type="text"
+            id="weight"
+            name="weight"
+            readonly
+            value="{{weight}}"
+          /><br /><br />
+
+          <label for="age">Возраст:</label>
+          <input
+            type="text"
+            id="age"
+            name="age"
+            readonly
+            value="{{age}}"
+          /><br /><br />
+
+          <label for="metabolism">Метаболизм:</label>
+          <input
+            type="text"
+            id="metabolism"
+            name="metabolism"
+            readonly
+            value="{{metabolism}}"
+          /><br /><br />
+          <label for="activity">Уровень физической активности:</label>
+          <input
+            type="text"
+            id="Physical_activity"
+            name="Physical_activity"
+            readonly
+            value="{{Physical_activity}}"
+          />
+          <div class="calculator_title">
+            <span style="color: rgba(251, 147, 51, 1)">Ваш рацион</span> питания
+          </div>
+        </form>
+        <table style="margin-left: 12%" class="diet-table">
+          <thead>
+            <tr>
+              <th>Продукт</th>
+              <th>Калории (ккал)</th>
+              <th>Белки (г)</th>
+              <th>Жиры (г)</th>
+              <th>Углеводы (г)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr>
+              <td>{{ product.Product_name }}</td>
+              <td>{{ product.Product_calories }}</td>
+              <td>{{ product.Product_proteins }}</td>
+              <td>{{ product.Product_fats }}</td>
+              <td>{{ product.Product_carbohydrates }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="program_title">
+          Ваша
+          <span style="color: rgba(251, 147, 51, 1)">программа тренировок</span>
+        </div>
+        <table class="training-table">
+          <thead>
+            <tr>
+              <th>Тренировка</th>
+              <th>Упражнение</th>
+              <th>Количество подходов</th>
+              <th>Количество повторений</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set day = 0 %} {% set training_number = 0 %} {% for exercise in
+            exercises %} {% if loop.index % 5 == 1 %} {% set day = day + 1 %} {%
+            set training_number =training_number + loop.index % 4 %}
+            <tr>
+              <td rowspan="5">{{ training_number }}</td>
+              <td>{{ exercise.Exercise_name }}</td>
+              <td>{{ exercise.Number_of_approaches }}</td>
+              <td>{{ exercise.Number_of_repetitions }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td>{{ exercise.Exercise_name }}</td>
+              <td>{{ exercise.Number_of_approaches }}</td>
+              <td>{{ exercise.Number_of_repetitions }}</td>
+            </tr>
+            {% endif %} {% endfor %}
+          </tbody>
+        </table>
+        <button
+          href="{{ url_for('download_profile', user_id=current_user.id) }}"
+          class="btn btn-primary"
+          style="margin-left: 40%;"
+        >
+          Скачать профиль
+        </button>
+      </div>
+    </main>
+
+    <footer class="footer__container">
+      <div class="footer__information">
+        <img
+          src="{{url_for('static', filename='Images/images_major/information_for_ clients.svg')}}"
+          alt="#"
+        />
+      </div>
+      <div class="footer__contact-information">
+        <img
+          src="{{url_for('static', filename='Images/images_major/contact_information.svg')}}"
+          alt="#"
+        />
+      </div>
+    </footer>
+  </body>
+</html>
