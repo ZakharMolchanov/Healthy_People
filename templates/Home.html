@@ -28,6 +28,7 @@
           <a href="Home" class="navbar__menu-item active">Home</a>
           <a href="training" class="navbar__menu-item">Программа тренировок </a>
           <a href="diets" class="navbar__menu-item">План питания</a>
+          <a href="profile" class="navbar__menu-item">Кабинет</a>
         </div>
 
         <button id="logout-btn" class="navbar__sign">Выход</button>
@@ -50,8 +51,7 @@
     </nav>
     <main class="main">
       <p class="welcome_messange">
-        <span style="color: rgba(251, 147, 51, 1)">Здравствуйте </span>{{ name
-        }} {{ surname }}
+        <span style="color: rgba(251, 147, 51, 1)">Здравствуйте </span>
       </p>
 
       <div class="main-name__conteiner">
@@ -83,13 +83,14 @@
         <div class="website__item">
           <img
             src="{{url_for('static', filename='Images/images_major/Choice_training_plan.svg')}}"
-            alt="#"
+            alt="training"
+            href="training"
           />
         </div>
         <div class="website__item">
           <img
             src="{{url_for('static', filename='Images/images_major/diet.svg')}}"
-            alt="#"
+            alt="diets"
           />
         </div>
         <div class="website__item">
