@@ -271,6 +271,42 @@ table {
   font-weight: bold;
   text-align: left;
 }
+.container_search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search_input {
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  width: 60%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.search_input:focus {
+  outline: none;
+  border-color: #fb9333;
+}
+
+.button_search {
+  background-color: rgba(251, 147, 51, 1);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.button_search:hover {
+  background-color: #ffba6f;
+}
 
 .calculate-form input[type="number"],
 .calculate-form select {
@@ -291,6 +327,99 @@ table {
 
 .calculate-form select {
   border-radius: 20px;
+}
+#weightModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 280px;
+  padding: 20px;
+  border-radius: 10px;
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+.edit-weight-button [type="submit"] {
+  background-color: #fb9333;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.edit-weight-button
+{
+  background-color: #fb9333;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: Montserrat;
+} 
+.delete-product-button{
+  background-color: #fb9333;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: Montserrat;
+
+}
+.delete-product-button [type="submit"] {
+  background-color: #fb9333;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+#weightModal form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#weightModal input[type="text"] {
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#weightModal button[type="submit"] {
+  background-color: #fb9333;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+#weightModal button[type="submit"]:hover {
+  background-color: #ffba6f;
+}
+
+#closeResultsButton {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  color: #fb9333;
+  font-size: 24px;
 }
 
 .calculate-form input[type="submit"] {

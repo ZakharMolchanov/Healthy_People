@@ -6,6 +6,7 @@ from sqlalchemy import func
 import io
 import xlsxwriter
 import pandas as pd
+from help_function import calculate_metabolism, calculate_macros, get_diet, get_diet_products, get_physical_activity_id
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Ilia123qweasdzxc@localhost:3306/healthy_people'
@@ -55,22 +56,11 @@ def add_user():
 
 @app.route('/delete-account', methods=['POST'])
 def delete_account():
-    # Получить идентификатор пользователя
     user_id = current_user.get_id()
-
-    # Найти пользователя в базе данных
     user = Users.query.get(user_id)
-
-    # Удалить пользователя из базы данных
     db.session.delete(user)
-
-    # Сохранить изменения в базе данных
     db.session.commit()
-
-    # Выйти из учетной записи удаленного пользователя
     logout()
-
-    # Вернуть сообщение об успешном удалении аккаунта
     return render_template('index.html')
 
 
@@ -115,68 +105,114 @@ def index_user(user_id, user_name):
 @login_required
 def diets(user_id):
     if request.method == 'POST':
-
+        if current_user.Diet_id is None:
+            new_diet = Diets(Diet_name=str("Пользователь " + str(current_user.User_id)), Diet_calories=0,
+                             Diet_proteins=0,
+                             Diet_fats=0, Diet_carbohydrates=0)
+            db.session.add(new_diet)
+            db.session.commit()
+            current_user.Diet_id = new_diet.Diet_id
+            db.session.commit()
         data = request.form.to_dict()
         current_user.Weight = data['weight']
         current_user.Height = data['height']
         current_user.Age = data['age']
         if data['gender'] == 'female':
             current_user.Gender = 'F'
-            current_user.Metabolism = int((65 + (9.6 * int(current_user.Weight)) + (1.8 * int(current_user.Height)) - (
-                    4.7 * int(current_user.Age))) * float(data['Physical_activity']))
+            current_user.Metabolism = calculate_metabolism(current_user.Weight, current_user.Height, current_user.Age,
+                                                           data['Physical_activity'])
         else:
-            current_user.Gender = "M"
-            current_user.Metabolism = int((66 + (13.7 * int(current_user.Weight)) + (5 * int(current_user.Height)) - (
-                    6.8 * int(current_user.Age))) * float(data['Physical_activity']))
+            current_user.Gender = 'M'
+            current_user.Metabolism = calculate_metabolism(current_user.Weight, current_user.Height, current_user.Age,
+                                                           data['Physical_activity'], data)
 
-        if data['Physical_activity'] == '1':
-            current_user.Physical_activity_id = 1
-        elif data['Physical_activity'] == '1.2':
-            current_user.Physical_activity_id = 2
-        elif data['Physical_activity'] == '1.375':
-            current_user.Physical_activity_id = 3
-        elif data['Physical_activity'] == '1.55':
-            current_user.Physical_activity_id = 4
-        elif data['Physical_activity'] == '1.6375':
-            current_user.Physical_activity_id = 5
-
+        current_user.Physical_activity_id = get_physical_activity_id(data['Physical_activity'])
         db.session.commit()
-        proteins = int((current_user.Metabolism * 0.45) // 4)
-        fats = int((current_user.Metabolism * 0.2) // 9)
-        carbs = int((current_user.Metabolism * 0.35) // 4)
-        diet = Diets.query.order_by(
-                func.abs(Diets.Diet_calories - current_user.Metabolism)
-        ).first()
-
-        current_user.Diet_id = diet.Diet_id
+        proteins, fats, carbs = calculate_macros(current_user.Metabolism)
         db.session.commit()
-        products = Products.query.join(ProductsDiets).filter(
-                ProductsDiets.Diet_id == diet.Diet_id).all()
         return render_template('diets.html', user_id=user_id, metabolism=current_user.Metabolism,
+                               height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
+                               proteins=proteins, fats=fats, carbs=carbs)
+    elif current_user.Diet_id is not None:
+        diet = Diets.query.get(current_user.Diet_id)
+        products = get_diet_products(diet.Diet_id)
+
+        proteins, fats, carbs = calculate_macros(current_user.Metabolism)
+        return render_template('diets.html', user_id=user_id,
+                               metabolism=current_user.Metabolism,
                                height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
                                proteins=proteins, fats=fats, carbs=carbs, products=products,
                                diet_calories=diet.Diet_calories,
                                diet_proteins=diet.Diet_proteins, diet_fats=diet.Diet_fats,
                                diet_carbs=diet.Diet_carbohydrates)
-
-    elif current_user.Diet_id is not None:
-        diet = Diets.query.get(current_user.Diet_id)
-        products = Products.query.join(ProductsDiets).filter(
-                ProductsDiets.Diet_id == diet.Diet_id).all()
-
-        return render_template('diets.html', user_id=user_id,
-                               metabolism=current_user.Metabolism,
-                               height=current_user.Height, weight=current_user.Weight, age=current_user.Age,
-                               proteins=int((current_user.Metabolism * 0.45) // 4),
-                               fats=int((current_user.Metabolism * 0.2) // 9),
-                               carbs=int((current_user.Metabolism * 0.35) // 4), products=products,
-                               diet_calories=diet.Diet_calories,
-                               diet_proteins=diet.Diet_proteins, diet_fats=diet.Diet_fats,
-                               diet_carbs=diet.Diet_carbohydrates
-                               )
-
     else:
         return render_template('diets.html', user_id=user_id, diet=None)
+
+
+@app.route('/delete_product', methods=['POST'])
+@login_required
+def delete_product():
+    product_id = request.form.get('productId')
+    product = ProductsDiets.query.filter_by(Product_id=product_id, Diet_id=current_user.Diet_id).first()
+
+    if product:
+        db.session.delete(product)
+        db.session.commit()
+        return jsonify(message="Продукт успешно удален из диеты.")
+    else:
+        return jsonify(error="Продукт не найден в диете."), 404
+
+
+@app.route('/edit_weight', methods=['POST'])
+@login_required
+def edit_weight():
+    product_id = request.form.get('productId')
+    weight = request.form.get('weight')
+    product = ProductsDiets.query.filter_by(Product_id=product_id, Diet_id=current_user.Diet_id).first()
+
+    if product:
+        product.Product_weight = weight
+        db.session.commit()
+        return jsonify(message="Вес продукта успешно изменен.")
+    else:
+        return jsonify(error="Продукт не найден в диете."), 404
+
+
+@app.route('/search', methods=['POST'])
+def search_products():
+    data = request.form.to_dict()
+    products = Products.query.filter(Products.Product_name.like('%' + data['search'] + '%')).all()
+    serialized_products = []
+    for product in products:
+        serialized_product = {
+                'Product_id'           : product.Product_id,
+                'Product_name'         : product.Product_name,
+                'Product_calories'     : product.Product_calories,
+                'Product_proteins'     : product.Product_proteins,
+                'Product_fats'         : product.Product_fats,
+                'Product_carbohydrates': product.Product_carbohydrates
+        }
+        serialized_products.append(serialized_product)
+    return jsonify({'products': serialized_products})
+
+
+@app.route('/add_product', methods=['POST'])
+def add_product_to_diet():
+    data = request.form.to_dict()
+    productId = data['productId']
+    weight = data['weight']
+    if current_user.Diet_id is None:
+        new_diet = Diets(Diet_name=str("Пользователь " + current_user.User_id), Diet_calories=0, Diet_proteins=0,
+                         Diet_fats=0, Diet_carbohydrates=0)
+        db.session.add(new_diet)
+        db.session.commit()
+        current_user.Diet_id = new_diet.Diet_id
+        db.session.commit()
+    product = Products.query.get(productId)
+    product_diet = ProductsDiets(Product_id=productId, Diet_id=current_user.Diet_id, Product_weight=weight)
+    db.session.add(product_diet)
+    db.session.commit()
+    return jsonify({'message': 'Product added to diet'})
 
 
 @app.route('/Home/<user_id>/training', methods=['GET', 'POST'])
@@ -340,7 +376,6 @@ def profile(user_id):
 @app.route('/Home/download', methods=['GET'])
 @login_required
 def download_profile():
-    # Create a dictionary to store the profile information
     data = {
             "Имя"                          : [current_user.User_name],
             "Фамилия"                      : [current_user.User_surname],
@@ -358,7 +393,6 @@ def download_profile():
             ],
     }
 
-    # Create a dictionary to store the diet program information
     diet_data = {}
     if current_user.Diet_id is not None:
         diet_products = Products.query.join(ProductsDiets).filter(
@@ -370,7 +404,6 @@ def download_profile():
             diet_data[f"Жиры {i + 1}"] = [p.Product_fats]
             diet_data[f"Углеводы {i + 1}"] = [p.Product_carbohydrates]
 
-    # Create a dictionary to store the workout program information
     workout_data = {}
     if current_user.Program_id is not None:
         program_exercises = Exercises.query.join(Exercises_programs).filter(
@@ -380,23 +413,18 @@ def download_profile():
             workout_data[f"Количество подходов {i + 1}"] = [e.Number_of_approaches]
             workout_data[f"Количество повторений {i + 1}"] = [e.Number_of_repetitions]
 
-    # Create a Pandas Excel writer using XlsxWriter as the engine
     filename = f"{current_user.User_name}_{current_user.User_surname}_profile.xlsx"
     with pd.ExcelWriter(filename, engine='xlsxwriter') as writer:
-        # Write the profile information to the first sheet
         df = pd.DataFrame.from_dict(data, orient="index")
         df.to_excel(writer, sheet_name='Профиль', header=False)
 
-        # Write the diet program information to the second sheet
         if current_user.Diet_id is not None:
             df_diet = pd.DataFrame.from_dict(diet_data, orient="index")
         df_diet.to_excel(writer, sheet_name='Диета', header=False)
-        # Write the workout program information to the third sheet
         if current_user.Program_id is not None:
             df_workout = pd.DataFrame.from_dict(workout_data, orient="index")
             df_workout.to_excel(writer, sheet_name='Тренировка', header=False)
 
-    # Return the file as a downloadable attachment
     return send_file(filename, as_attachment=True)
 
 

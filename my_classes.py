@@ -114,7 +114,8 @@ class Products(db.Model):
 
 class ProductsDiets(db.Model):
     Product_id = db.Column(db.Integer, db.ForeignKey('products.Product_id'), primary_key=True)
-    Diet_id = db.Column(db.Integer, db.ForeignKey('diet.Diet_id'), primary_key=True)
+    Diet_id = db.Column(db.Integer, db.ForeignKey('diets.Diet_id'), primary_key=True)
+    Product_weight = db.Column(db.Integer, nullable=False)
 
     def get_id(self):
         return self.Product_id

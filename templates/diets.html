@@ -15,6 +15,176 @@
       rel="stylesheet"
       href="{{url_for('static',filename='css/style_diets.css')}}"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      .product-row:hover {
+        background-color: #ffe8cc;
+      }
+      #closeResultsButton {
+        display: none;
+      }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        var searchResults = $("#searchResults");
+        var closeResultsButton = $("#closeResultsButton");
+        var weightModal = $("#weightModal");
+
+        $("#searchForm").submit(function (event) {
+          event.preventDefault();
+
+          var searchQuery = $("#search").val();
+
+          $.ajax({
+            url: "/search",
+            type: "POST",
+            data: { search: searchQuery },
+            success: function (response) {
+              searchResults.empty();
+
+              var table = $("<table>").addClass("diet-table");
+              var headerRow = $("<tr>").append(
+                $("<th>").text("Наименование"),
+                $("<th>").text("Калорийность"),
+                $("<th>").text("Белки"),
+                $("<th>").text("Жиры"),
+                $("<th>").text("Углеводы")
+              );
+              table.append(headerRow);
+
+              response.products.forEach(function (product) {
+                var row = $("<tr>")
+                  .addClass("product-row")
+                  .data("productId", product.Product_id)
+                  .append(
+                    $("<td>").text(product.Product_name),
+                    $("<td>").text(product.Product_calories),
+                    $("<td>").text(product.Product_proteins),
+                    $("<td>").text(product.Product_fats),
+                    $("<td>").text(product.Product_carbohydrates)
+                  );
+                table.append(row);
+              });
+
+              searchResults.append(table);
+              closeResultsButton.show();
+            },
+            error: function (error) {
+              console.log("Произошла ошибка при выполнении запроса: " + error);
+            },
+          });
+        });
+
+        $(document).on("click", ".product-row", function () {
+          var productId = $(this).data("productId");
+          openWeightModal(productId);
+        });
+
+        function openWeightModal(productId) {
+          $("#weightInput").val("");
+          $("#selectedProductId").val(productId);
+          $("#weightModal").fadeIn();
+        }
+
+        $("#weightForm").submit(function (event) {
+          event.preventDefault();
+
+          var weight = $("#weightInput").val();
+          var productId = $("#selectedProductId").val();
+
+          if (parseFloat(weight) <= 0 || isNaN(parseFloat(weight))) {
+            alert("Введите число больше 0 в поле веса продукта.");
+            return;
+          }
+
+          $.ajax({
+            url: "/add_product",
+            type: "POST",
+            data: { productId: productId, weight: weight },
+            success: function (response) {
+              console.log("Продукт успешно добавлен в диету.");
+              location.reload(); // Перезагрузка страницы после успешного добавления продукта
+            },
+            error: function (error) {
+              console.log(
+                "Произошла ошибка при добавлении продукта в диету: " + error
+              );
+            },
+          });
+
+          $("#weightModal").fadeOut();
+        });
+
+        $("#closeResultsButton").click(function () {
+          searchResults.empty();
+          closeResultsButton.hide();
+          weightModal.fadeOut();
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Обработка события нажатия на кнопку удаления продукта
+        $(".delete-product-button").click(function () {
+          var productId = $(this).data("product-id");
+          deleteProduct(productId);
+        });
+
+        // Функция для удаления продукта
+        function deleteProduct(productId) {
+          $.ajax({
+            url: "/delete_product",
+            type: "POST",
+            data: { productId: productId },
+            success: function (response) {
+              console.log("Продукт успешно удален из диеты.");
+
+              // Перезагрузка страницы
+              location.reload();
+            },
+            error: function (error) {
+              console.log("Произошла ошибка при удалении продукта: " + error);
+            },
+          });
+        }
+
+        // Обработка события нажатия на кнопку изменения веса продукта
+        $(".edit-weight-button").click(function () {
+          var productId = $(this).data("product-id");
+          showEditWeightForm(productId);
+        });
+
+        // Функция для отображения формы изменения веса продукта
+        function showEditWeightForm(productId) {
+          var weight = prompt("Введите новый вес продукта:");
+
+          // Проверка на валидность введенного числа
+          if (parseFloat(weight) <= 0 || isNaN(parseFloat(weight))) {
+            alert("Введите число больше 0 в поле веса продукта.");
+            return;
+          }
+
+          $.ajax({
+            url: "/edit_weight",
+            type: "POST",
+            data: { productId: productId, weight: weight },
+            success: function (response) {
+              console.log("Вес продукта успешно изменен.");
+
+              // Перезагрузка страницы
+              location.reload();
+            },
+            error: function (error) {
+              console.log(
+                "Произошла ошибка при изменении веса продукта: " + error
+              );
+            },
+          });
+        }
+      });
+    </script>
 
     <title>Healthy People</title>
   </head>
@@ -177,48 +347,6 @@
           <span style="color: rgba(251, 147, 51, 1)">Ваш рацион</span> питания
         </div>
       </div>
-      <div class="diet_container__calories">
-        <div class="result">
-          <label>Калории</label>
-          <input
-            type="text"
-            id="result"
-            name="result"
-            value="{{diet_calories}}"
-            readonly
-          />
-        </div>
-        <div class="result">
-          <label>Белки</label>
-          <input
-            type="text"
-            id="result"
-            name="result"
-            value="{{diet_proteins}}"
-            readonly
-          />
-        </div>
-        <div class="result">
-          <label>Жиры</label>
-          <input
-            type="text"
-            id="result"
-            name="result"
-            value="{{diet_fats}}"
-            readonly
-          />
-        </div>
-        <div class="result">
-          <label>Углеводы</label>
-          <input
-            type="text"
-            id="result"
-            name="result"
-            value="{{diet_carbs}}"
-            readonly
-          />
-        </div>
-      </div>
       <form
         method="post"
         action="{{ url_for('download_products', user_id=user_id, username=username) }}"
@@ -234,6 +362,8 @@
             <th>Белки (г)</th>
             <th>Жиры (г)</th>
             <th>Углеводы (г)</th>
+            <th>Вес (г)</th>
+            <th>Действия</th>
           </tr>
         </thead>
         <tbody>
@@ -244,10 +374,107 @@
             <td>{{ product.Product_proteins }}</td>
             <td>{{ product.Product_fats }}</td>
             <td>{{ product.Product_carbohydrates }}</td>
+            <td>{{ product.weight }}</td>
+            <td>
+              <button
+                class="edit-weight-button"
+                data-product-id="{{ product.Product_id }}"
+              >
+                Изменить вес
+              </button>
+              <button
+                class="delete-product-button"
+                data-product-id="{{ product.Product_id }}"
+              >
+                Удалить
+              </button>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
+      <div id="weightModal" style="display: none">
+        <form id="weightForm">
+          <label for="weightInput">Введите новый вес продукта:</label>
+          <input
+            type="text"
+            id="weightInput"
+            placeholder="Вес в граммах"
+            required
+          />
+          <input type="hidden" id="selectedProductId" />
+          <button type="submit">Добавить</button>
+        </form>
+      </div>
+
+      <div class="diet_container__calories">
+        <div class="result">
+          <label>Калории</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{ diet_calories }}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Белки</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{ diet_proteins }}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Жиры</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{ diet_fats }}"
+            readonly
+          />
+        </div>
+        <div class="result">
+          <label>Углеводы</label>
+          <input
+            type="text"
+            id="result"
+            name="result"
+            value="{{ diet_carbs }}"
+            readonly
+          />
+        </div>
+      </div>
+      <p class="calculator_title">Поиск продуктов</p>
+      <form id="searchForm" class="container_search">
+        <input
+          class="search_input"
+          type="text"
+          id="search"
+          placeholder="Введите слова для поиска"
+        />
+        <button type="submit" class="button_search">Искать</button>
+      </form>
+
+      <ul id="searchResults"></ul>
+
+      <div id="weightModal">
+        <form id="weightForm">
+          <input
+            type="text"
+            id="weightInput"
+            placeholder="Введите вес продукта в граммах"
+          />
+          <input type="hidden" id="selectedProductId" />
+          <button type="submit">Добавить</button>
+        </form>
+
+        <div id="closeResultsButton">&#10006;</div>
+      </div>
       <div class="diets-plan-title">
         <span style="color: rgba(251, 147, 51, 1)">Дополнительная </span
         >информация
